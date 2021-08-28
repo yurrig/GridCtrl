@@ -42,12 +42,14 @@ public:
 public:
 
 protected:
-	CWnd *m_pParentWnd;
-	CRect m_rectTitle;
+    CWnd *m_pParentWnd;
+    CRect m_rectTitle;
     CRect m_rectHover;
     CRect m_rectDisplay;
     CString m_strTitle;		// for use in OnPaint()
     DWORD m_dwFormat;
+    CFont m_font;
+    int m_xoffset;
 
 	// Generated message map functions
 protected:
