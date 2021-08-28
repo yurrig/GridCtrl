@@ -100,7 +100,7 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
 	if( IsWindowVisible() ) 
 		return;
 
-	m_rectHover = (lpHoverRect != NULL)? lpHoverRect : rectTitle;
+	m_rectHover = (lpHoverRect != NULL)? lpHoverRect : &rectTitle;
 	m_rectHover.right++; m_rectHover.bottom++;
 
 	m_pParentWnd->ClientToScreen( m_rectHover );
@@ -127,11 +127,14 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
 	m_strTitle += lpszTitleText; 
 	//m_strTitle += _T(" ");
 
-	CFont font, *pOldFont = NULL;
+	m_xoffset = xoffset;
+
+	CFont *pOldFont = NULL;
 	if (lpLogFont)
 	{
-		font.CreateFontIndirect(lpLogFont);
-		pOldFont = dc.SelectObject( &font );
+		m_font.DeleteObject();
+		m_font.CreateFontIndirect(lpLogFont);
+		pOldFont = dc.SelectObject( &m_font );
 	}
 	else
 	{
@@ -145,8 +148,6 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
 	dc.GetTextMetrics(&tm);
 	size.cx += tm.tmOverhang;
 
-	dc.SelectObject( pOldFont );
-
 	m_rectDisplay = rectTitle;
 	m_rectDisplay.left += xoffset-1;
     m_rectDisplay.top  += 0;
@@ -154,8 +155,10 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
     m_rectDisplay.bottom = m_rectDisplay.top + size.cy;
 	
 	// Do not display if the text fits within available space
-	if ( m_rectDisplay.right <= rectTitle.right-xoffset )
+	if (m_rectDisplay.right <= rectTitle.right - xoffset) {
+		dc.SelectObject(pOldFont);
         return;
+	 }
 
 	// We will use avg char width to set max tooltip width
     int nMaxTooltipWidth = -1;
@@ -282,22 +285,22 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
 
     int nHeight = dc.DrawText(m_strTitle, rectCalc, dwFormat | DT_CALCRECT);
     m_dwFormat = dwFormat;
-    
+
+	 rectCalc.InflateRect(xoffset, 0, xoffset, 0);
+
 	// If this is a single line, shorten the display to get rid of any excess blank space
 	if (nHeight == tm.tmHeight)
     {
 		rectCalc.right = rectCalc.left + size.cx + 3;
     }
 
-
-    m_rectDisplay.bottom = m_rectDisplay.top + nHeight;
-
 	// ensure the tooltip does not exceed the bottom of the screen
 	if (m_rectDisplay.bottom > rectClient.bottom)
     {
-		m_rectDisplay.bottom = rectClient.bottom;
         rectCalc.bottom = rectClient.bottom; 
     }
+
+	m_rectDisplay = rectCalc;
 
 	SetWindowPos( &wndTop, 
         m_rectDisplay.left, 
@@ -306,6 +309,8 @@ void CTitleTip::Show(CRect rectTitle, LPCTSTR lpszTitleText,
         m_rectDisplay.Height(),
 		SWP_SHOWWINDOW|SWP_NOACTIVATE );
     SetCapture();
+
+   dc.SelectObject(pOldFont);
 }
 
 void CTitleTip::Hide()
@@ -413,12 +418,13 @@ void CTitleTip::OnPaint()
     TEXTMETRIC tm;
 	dc.GetTextMetrics(&tm);
 
-	CFont *pFont = m_pParentWnd->GetFont(); 	// use same font as ctrl
+	CFont *pFont = m_font.GetSafeHandle() ? &m_font : m_pParentWnd->GetFont(); 	// use same font as ctrl
 	CFont *pFontDC = dc.SelectObject( pFont );
 	int nHeight=0;
 
 	CRect rect = m_rectDisplay;
 	ScreenToClient(rect);
+	rect.left += m_xoffset;
 
 	dc.SetBkMode( TRANSPARENT ); 
 
