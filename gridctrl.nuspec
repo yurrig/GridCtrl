@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>GridCtrl</id>
+        <authors>Chris Maunder</authors>
+        <version>2.27</version>
+        <description>MFC Library for Grid control</description>
+        <tags>native nativepackage C++ gridctrl</tags>
+    </metadata>
+    <files>
+        <file src="project\x64\Debug\*.lib"   target="build\native\lib\Debug"   />
+        <file src="project\x64\Debug\*.pdb"   target="build\native\lib\Debug"   />
+        <file src="project\x64\Release\*.lib" target="build\native\lib\Release" />
+        <file src="project\x64\Release\*.pdb" target="build\native\lib\Release" />
+        <file src="*.h"                       target="build\native\include"     />
+        <file src="Experimental Upgrades\*.h" target="build\native\include\Experimental Upgrades"/>
+        <file src="GridCtrl.props"                     target="build\native"             />
+    </files>
+</package>
