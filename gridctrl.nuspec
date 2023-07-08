@@ -14,6 +14,6 @@
         <file src="project\x64\Release\*.pdb" target="build\native\lib\Release" />
         <file src="*.h"                       target="build\native\include"     />
         <file src="Experimental Upgrades\*.h" target="build\native\include\Experimental Upgrades"/>
-        <file src="GridCtrl.props"                     target="build\native"             />
+        <file src="GridCtrl.targets"          target="build\native"             />
     </files>
 </package>

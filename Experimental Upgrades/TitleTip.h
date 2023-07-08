@@ -18,7 +18,8 @@ class CTitleTip : public CWnd
 public:
 	CTitleTip();
 	virtual ~CTitleTip();
-	virtual BOOL Create( CWnd *pParentWnd);
+	using CWnd::Create;
+	virtual BOOL Create(CWnd *pParentWnd);
 
 // Attributes
 public:
@@ -35,7 +36,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CTitleTip)
 	public:
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	BOOL PreTranslateMessage(MSG* pMsg) override;
 	//}}AFX_VIRTUAL
 
 // Implementation

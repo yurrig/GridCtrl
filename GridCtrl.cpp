@@ -2462,7 +2462,7 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject,
         nIndex = strLine.Find(_T("\n"));
 
         // Store the remaining chars after the newline
-        CString strNext = (nIndex < 0)? _T("")  : strLine.Mid(nIndex + 1);
+        CString strNext = (nIndex < 0) ? CString() : strLine.Mid(nIndex + 1);
 
         // Remove all chars after the newline
         if (nIndex >= 0)
@@ -2509,7 +2509,7 @@ BOOL CGridCtrl::PasteTextToGrid(CCellID cell, COleDataObject* pDataObject,
 				if (iColVis > PasteRange.GetMaxCol()) PasteRange.SetMaxCol(iColVis);
             }
 
-            strLine = (nLineIndex >= 0)? strLine.Mid(nLineIndex + 1) : _T("");
+            strLine = (nLineIndex >= 0) ? strLine.Mid(nLineIndex + 1) : CString();
             nLineIndex = strLine.FindOneOf(_T("\t,"));
             strCellText = (nLineIndex >= 0)? strLine.Left(nLineIndex) : strLine;
 
@@ -7261,7 +7261,7 @@ BOOL CGridCtrl::Save(LPCTSTR filename, TCHAR chSeparator/*=_T(',')*/)
             for (int j = 0; j < nNumColumns; j++)
             {
                 File.WriteString(GetItemText(i,j));
-                File.WriteString((j==(nNumColumns-1))? _T("\n"): strSeparator);
+                File.WriteString((j == (nNumColumns - 1)) ? CString() : strSeparator);
             }
         }
 
